@@ -28,6 +28,8 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [filterText, setFilterText] = useState('')
   const [statusFilter, setStatusFilter] = useState('all') // all | specific status
+  const [hotelFilter, setHotelFilter] = useState('') // hotel name filter
+  const [hidePastDates, setHidePastDates] = useState(true) // hide past booking dates (default: checked)
   const [currentPage, setCurrentPage] = useState(1)
   const rowsPerPage = 20
 
@@ -115,6 +117,8 @@ function App() {
     setColumns([])
     setFilterText('')
     setStatusFilter('all')
+    setHotelFilter('')
+    setHidePastDates(true)
   }
 
   // Render cell content (with links)
@@ -153,13 +157,18 @@ function App() {
     }
   }
 
-  // Filter data by text and status
+  // Filter data by text, status and hotel
   const getFilteredData = () => {
     let filtered = data
     
     // Status filter
     if (statusFilter !== 'all') {
       filtered = filtered.filter(item => item['状態'] === statusFilter)
+    }
+    
+    // Hotel filter
+    if (hotelFilter) {
+      filtered = filtered.filter(item => item['ホテル'] === hotelFilter)
     }
     
     // Text search
@@ -289,9 +298,15 @@ function App() {
                 }}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition bg-white"
               >
-                <option value="all">すべて表示</option>
-                <option value="利用者登録済">利用者登録済</option>
-                <option value="申込済">申込済</option>
+                <option value="all">すべて表示 ({data.length})</option>
+                {statuses.map((status, idx) => {
+                  const count = data.filter(d => d['状態'] === status).length
+                  return (
+                    <option key={idx} value={status}>
+                      {status} ({count})
+                    </option>
+                  )
+                })}
               </select>
             </div>
             
@@ -315,7 +330,21 @@ function App() {
           </div>
           
           {/* Refresh button */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            {/* Past dates checkbox */}
+            <label className="flex items-center cursor-pointer space-x-2">
+              <input
+                type="checkbox"
+                checked={hidePastDates}
+                onChange={(e) => {
+                  setHidePastDates(e.target.checked)
+                  setCurrentPage(1)
+                }}
+                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              />
+              <span className="text-sm font-medium text-gray-700">過去分非表示</span>
+            </label>
+            
             <button
               onClick={fetchData}
               disabled={loading}
@@ -328,8 +357,8 @@ function App() {
             </button>
             
             {/* Stats */}
-            <div className="text-sm text-gray-600">
-              合計 {filteredData.length} 件表示中 | ページ {currentPage} / {totalPages || 1}
+            <div className="text-sm text-gray-600 whitespace-nowrap">
+              合計 {filteredData.length} 件 / {data.length} 件中 | ページ {currentPage} / {totalPages || 1}
             </div>
           </div>
         </div>
