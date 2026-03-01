@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yoyaku Final Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; }
+        h1 { color: #333; }
+        .row { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 8px; background: #f9fafb; }
+        a { 
+            color: #2563eb;
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: 500;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+            transition: all 0.15s;
+        }
+        a:hover { background: #dbeafe; color: #1e40af; }
+        .success { color: #059669; margin-top: 10px; }
+        .info { color: #6b7280; font-size: 14px; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #ddd; }
+    </style>
+</head>
+<body>
+    <h1>🏨 Yoyaku リンク最終テスト</h1>
+    
+    <div class="row">
+        <strong>受付番号：</strong><span id="receipt">8194660</span><br>
+        <strong>予約者：</strong><span id="name">チンマツ</span><br>
+        <strong>宿泊日：</strong><span id="date">2026 年 03 月 14 日</span><br>
+        
+        <hr style="margin: 15px 0; border: none; border-top: 1px solid #ddd;">
+        
+        <p><strong>詳細登録:</strong></p>
+        <a href="http://yoyaku.com/?id=8194660" target="_blank" id="booking-link">🔗 詳細登録</a>
+        
+        <div class="info">
+            <p><strong>テスト方法:</strong></p>
+            <ol>
+                <li>上のリンクを「Ctrl+Click」または「右クリック → 新しいタブで開く」</li>
+                <li>yoyaku.com の予約詳細ページが開くことを確認</li>
+                <li>表示されている情報が正しいかチェック</li>
+            </ol>
+            <p>✅ 成功したら、実際のアプリでも同じ操作ができます。</p>
+        </div>
+    </div>
+    
+    <div class="row">
+        <h3>デバッグ情報</h3>
+        <pre id="debug" style="background: #fff; padding: 10px; border-radius: 4px; overflow-x: auto;"></pre>
+    </div>
+    
+    <script>
+        // Log when link is clicked
+        document.getElementById('booking-link').addEventListener('click', function(e) {
+            const debug = document.getElementById('debug');
+            const timestamp = new Date().toISOString();
+            debug.innerHTML = `Link clicked at ${timestamp}\n\nTarget URL: http://yoyaku.com/?id=8194660\nTarget: _blank (new tab)\n\n✅ Link should open in a new tab.`;
+            
+            console.log('Booking link clicked!', {
+                timestamp,
+                url: this.href,
+                target: this.target
+            });
+        });
+        
+        // Pre-fill receipt info for testing
+        console.log('Testing receipt: 8194660');
+        console.log('Expected URL: http://yoyaku.com/?id=8194660');
+    </script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Link Extraction</title>
+</head>
+<body>
+  <h1>Link Extraction Test</h1>
+  <div id="output"></div>
+  
+  <script>
+    const SHEET_ID = '1mgeVYCf9a9zuEla6YfbNqceOsBRXA08YOc3rGuZtDx8';
+    const LINK_COLUMN_NAMES = ['詳細登録', 'キャンセル', '利用案内書'];
+    
+    async function testLinks() {
+      const output = document.getElementById('output');
+      
+      try {
+        // Try CSV export with different methods
+        const urlsToTry = [
+          `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=0`,
+          `https://spreadsheets.google.com/feeds/list/${SHEET_ID}/0/csv`
+        ];
+        
+        for (const url of urlsToTry) {
+          console.log('Trying:', url);
+          const response = await fetch(url);
+          const csvText = await response.text();
+          
+          if (csvText.includes('<HTML') || csvText.length < 100) {
+            console.log('Failed, got HTML or too short');
+            continue;
+          }
+          
+          console.log('Success! Length:', csvText.length);
+          
+          // Parse CSV
+          const lines = csvText.split('\n').filter(l => l.trim());
+          if (lines.length < 2) {
+            console.log('Too few lines');
+            continue;
+          }
+          
+          const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+          console.log('Headers:', headers);
+          
+          // Find link columns
+          const linkColIndices = {};
+          LINK_COLUMN_NAMES.forEach(col => {
+            const idx = headers.indexOf(col);
+            if (idx !== -1) {
+              linkColIndices[col] = idx;
+              console.log(`Found column "${col}" at index ${idx}`);
+            }
+          });
+          
+          // Check first 5 rows
+          output.innerHTML = '<h2>Sample Data:</h2>';
+          for (let i = 1; i <= Math.min(5, lines.length - 1); i++) {
+            const cells = parseCSVLine(lines[i]);
+            const rowHtml = `<h3>Row ${i}:</h3><ul>`;
+            
+            Object.entries(linkColIndices).forEach(([colName, colIdx]) => {
+              const value = cells[colIdx]?.trim() || '(empty)';
+              let extractedUrl = null;
+              
+              // Pattern 1: Direct URL
+              if (value.startsWith('http')) {
+                extractedUrl = value;
+              }
+              // Pattern 2: Contains space + http
+              else {
+                const parts = value.split(/\s+/);
+                const urlPart = parts.find(p => p.startsWith('http'));
+                if (urlPart) extractedUrl = urlPart;
+              }
+              
+              const liClass = extractedUrl ? 'class="success"' : 'class="fail"';
+              output.innerHTML += `<li ${liClass}><strong>${colName}:</strong> "${value}" → URL: ${extractedUrl || 'NONE'}</li>`;
+            });
+            
+            output.innerHTML += '</ul><hr>';
+          }
+          break;
+        }
+      } catch (error) {
+        output.innerHTML = `<p style="color:red">Error: ${error.message}</p>`;
+        console.error(error);
+      }
+    }
+    
+    function parseCSVLine(line) {
+      const result = [];
+      let current = '';
+      let inQuotes = false;
+      
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        const nextChar = line[i + 1];
+        
+        if (char === '"') {
+          if (inQuotes && nextChar === '"') {
+            current += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (char === ',' && !inQuotes) {
+          result.push(current);
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+      result.push(current);
+      return result.map(val => val.trim());
+    }
+    
+    testLinks();
+  </script>
+</body>
+</html>

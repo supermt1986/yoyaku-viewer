@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yoyaku Link Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-case {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        a {
+            color: #2563eb;
+            text-decoration: underline;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+        .status {
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔗 Yoyaku リンクテスト</h1>
+    
+    <div class="test-case">
+        <h3>受付番号：8194660 (チンマツ)</h3>
+        <p><strong>詳細登録:</strong></p>
+        <a href="https://yoyaku.co/booking/8194660" target="_blank">🔗 https://yoyaku.co/booking/8194660</a>
+        <button onclick="checkLink('https://yoyaku.co/booking/8194660', 'result-1')">テスト</button>
+        <div id="result-1" class="status" style="display:none;"></div>
+    </div>
+    
+    <div class="test-case">
+        <h3>受付番号：9412559 (コウユウ)</h3>
+        <p><strong>キャンセル:</strong></p>
+        <a href="https://yoyaku.co/cancel/9412559" target="_blank">🔗 https://yoyaku.co/cancel/9412559</a>
+        <button onclick="checkLink('https://yoyaku.co/cancel/9412559', 'result-2')">テスト</button>
+        <div id="result-2" class="status" style="display:none;"></div>
+    </div>
+    
+    <div class="test-case">
+        <h3>受け付け番号：9326280</h3>
+        <p><strong>利用案内書:</strong></p>
+        <a href="https://yoyaku.co/guide/9326280" target="_blank">🔗 https://yoyaku.co/guide/9326280</a>
+        <button onclick="checkLink('https://yoyaku.co/guide/9326280', 'result-3')">テスト</button>
+        <div id="result-3" class="status" style="display:none;"></div>
+    </div>
+    
+    <div class="test-case">
+        <h3>別の URL パターンを試す:</h3>
+        <ul>
+            <li><a href="http://www.yoyaku.co/" target="_blank">http://www.yoyaku.co/</a></li>
+            <li><a href="https://yoyaku.com/" target="_blank">https://yoyaku.com/</a></li>
+            <li><a href="https://www.yoyaku.co/" target="_blank">https://www.yoyaku.co/</a></li>
+        </ul>
+    </div>
+    
+    <script>
+        async function checkLink(url, resultId) {
+            const resultDiv = document.getElementById(resultId);
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'status';
+            resultDiv.innerHTML = 'チェック中...';
+            
+            try {
+                const controller = new AbortController();
+                const timeout = setTimeout(() => controller.abort(), 5000);
+                
+                const response = await fetch(url, {
+                    signal: controller.signal,
+                    method: 'HEAD'
+                });
+                
+                clearTimeout(timeout);
+                
+                if (response.ok) {
+                    resultDiv.classList.add('success');
+                    resultDiv.innerHTML = `✅ <strong>成功!</strong> HTTP ${response.status}<br>開けるはずです。<a href="${url}" target="_blank">ここをクリック</a>`;
+                } else {
+                    resultDiv.classList.add('error');
+                    resultDiv.innerHTML = `⚠️ <strong>HTTP ${response.status}</strong> - ページが存在しないかアクセス制限`;
+                }
+            } catch (error) {
+                clearTimeout(timeout);
+                resultDiv.classList.add('error');
+                resultDiv.innerHTML = `❌ <strong>エラー:</strong> ${error.message}<br>この URL は正しくない可能性があります`;
+            }
+        }
+    </script>
+</body>
+</html>
