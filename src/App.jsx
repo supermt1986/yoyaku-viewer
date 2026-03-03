@@ -151,7 +151,12 @@ function App() {
                     return cells[idx]?.hyperlink || fallback
                 }
                 
-                // Map basic fields
+                // Map basic fields - start with "更新日" from column A (index 0)
+                const updateDateCell = getCellRaw(0)
+                record['更新日'] = updateDateCell?.effectiveValue?.numberValue ?
+                    excelSerialToDate(updateDateCell.effectiveValue.numberValue) :
+                    ''
+                
                 record['受付番号'] = getCellValue(1)
                 record['予約者'] = getCellValue(2)
                 // For dates, store the full cell object so we can access both value and format later
@@ -173,12 +178,6 @@ function App() {
                 record['詳細登録'] = getHyperlink(7)
                 record['キャンセル'] = getHyperlink(8)
                 record['利用案内書'] = getHyperlink(9)
-                
-                // Read "更新日" from column L (index 11), same date format as 宿泊日
-                const updateDateCell = getCellRaw(11)
-                record['更新日'] = updateDateCell?.effectiveValue?.numberValue ?
-                    excelSerialToDate(updateDateCell.effectiveValue.numberValue) :
-                    ''
                 
                 // Debug logging for first few rows
                 if (rowIndex < 2) {
@@ -369,7 +368,16 @@ function App() {
     const paginatedData = filteredData.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
     const hotels = [...new Set(data.map(d => d['ホテル']).filter(Boolean))]
     const statuses = [...new Set(data.map(d => d['状態']).filter(Boolean))]
-    const columns = data.length > 0 ? Object.keys(data[0]).filter(k => k !== '_id') : []
+    
+    // Define column order explicitly - "更新日" first, then others
+    const COLUMNS_ORDER = ['更新日', '受付番号', '予約者', '宿泊日', 'ホテル', '部屋タイプ', 
+                           'キャンセル料発生日', '詳細登録', 'キャンセル', '利用案内書', '状態']
+    const columns = data.length > 0 ? 
+        Object.keys(data[0]).filter(k => k !== '_id').sort((a, b) => {
+            const idxA = COLUMNS_ORDER.indexOf(a)
+            const idxB = COLUMNS_ORDER.indexOf(b)
+            return (idxA === -1 ? 999 : idxA) - (idxB === -1 ? 999 : idxB)
+        }) : []
 
     if (!isLoggedIn) {
         return (
