@@ -6,7 +6,7 @@ const decodeEnv = (str) => atob(str).split('').reverse().join('')
 
 const ADMIN_USER = decodeEnv('NjIwMnVrYXlveQ==') // yoyaku2026
 const ADMIN_PASS = decodeEnv('NDMyMXVrYXlveQ==') // yoyaku1234
-const SHEET_ID = decodeEnv('ODhxGTd8OXBkRqoZbmVnYTJ5dXVlQzllYVVoWTVrZkdaYWMxSDEvMTA=') // Reversed Sheet ID
+const SHEET_ID = decodeEnv('OHhEdFp1R3IzY09ZODBBWFJCc09lY3FOYmZZNmFsRXV6OWE5ZkNZVmVnbTE=') // Correct Sheet ID
 const API_KEY = decodeEnv('NDRuVFhfM1JhMXZ2QmowWU9wUWlfaXRqOXVfSWlqTC1BeVNheklB') // Encrypted Google Sheets API Key
 
 // Extract real URL from Google redirect
@@ -96,6 +96,10 @@ function App() {
             
             // Use spreadsheets.get endpoint to access hyperlink field
             const apiUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}?includeGridData=true&key=${API_KEY}`
+            
+            console.log('🔑 SHEET_ID:', SHEET_ID)
+            console.log('🔑 API_KEY length:', API_KEY.length, 'starts with:', API_KEY.substring(0, 10))
+            console.log('🌐 API URL (masked):', apiUrl.replace(API_KEY, '[HIDDEN]'))
             
             const apiResponse = await fetch(apiUrl)
             
