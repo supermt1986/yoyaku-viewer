@@ -7,7 +7,7 @@ const decodeEnv = (str) => atob(str).split('').reverse().join('')
 const ADMIN_USER = decodeEnv('NjIwMnVrYXlveQ==') // yoyaku2026
 const ADMIN_PASS = decodeEnv('NDMyMXVrYXlveQ==') // yoyaku1234
 const SHEET_ID = decodeEnv('ODhxGTd8OXBkRqoZbmVnYTJ5dXVlQzllYVVoWTVrZkdaYWMxSDEvMTA=') // Reversed Sheet ID
-const API_KEY = import.meta.env.VITE_SHEETS_API_KEY || '' // Use environment variable
+const API_KEY = decodeEnv('NDRuVFhfM1JhMXZ2QmowWU9wUWlfaXRqOXVfSWlqTC1BeVNheklB') // Encrypted Google Sheets API Key
 
 // Extract real URL from Google redirect
 const extractRealUrl = (url) => {
