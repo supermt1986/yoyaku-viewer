@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 
-// Encrypted credentials (Base64 for demo - in production use proper encryption)
+// Encrypted credentials (Base64 + string reversal)
 const decodeEnv = (str) => atob(str).split('').reverse().join('')
 
-const ADMIN_USER = decodeEnv('Niow20yxay') // yoyaku2026
-const ADMIN_PASS = decodeEnv('ND3wlyu2') // yoyaku1234
-const SHEET_ID = decodeEnv('ODhxGTd8OXBkRqoZbmVnYTJ5dXVlQzllYVVoWTVrZkdaYWMxSDEvMTA=') // Reversed Sheet ID
-const API_KEY = import.meta.env.VITE_SHEETS_API_KEY || '' // Use environment variable
+const ADMIN_USER = decodeEnv('NjIwMnVrYXlveQ==') // yoyaku2026
+const ADMIN_PASS = decodeEnv('NDMyMXVrYXlveQ==') // yoyaku1234
+const SHEET_ID = decodeEnv('OHhEdFp1R3IzY09ZODBBWFJCc09lY3FOYmZZNmFsRXV6OWE5ZkNZVmVnbTE=') // Sheet ID encrypted
+// ⚠️ TEMPORARY: Direct API key for Cloudflare Pages deployment (env vars not available yet)
+const API_KEY = 'AIzaSyA-LjiI_u9jti_iQpOY0jBvv1aR3_XTn44'
 
 // Extract real URL from Google redirect
 const extractRealUrl = (url) => {
@@ -285,7 +286,7 @@ function App() {
 
     const renderCell = (value, columnName, row) => {
         // Format date columns: yyyy 年 mm 月 dd 日
-        if (columnName === '宿泊日' || columnName === 'キャンセル料発生日') {
+        if (columnName === '宿泊日' || columnName === 'キャンセル料発生日' || columnName === '更新日') {
             return <span>{formatDate(value)}</span>
         }
 
