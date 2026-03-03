@@ -4,8 +4,8 @@ import './App.css'
 // Encrypted credentials (Base64 for demo - in production use proper encryption)
 const decodeEnv = (str) => atob(str).split('').reverse().join('')
 
-const ADMIN_USER = decodeEnv('Niow20yxay') // yoyaku2026
-const ADMIN_PASS = decodeEnv('ND3wlyu2') // yoyaku1234
+const ADMIN_USER = decodeEnv('NjIwMnVrYXlveQ==') // yoyaku2026
+const ADMIN_PASS = decodeEnv('NDMyMXVrYXlveQ==') // yoyaku1234
 const SHEET_ID = decodeEnv('ODhxGTd8OXBkRqoZbmVnYTJ5dXVlQzllYVVoWTVrZkdaYWMxSDEvMTA=') // Reversed Sheet ID
 const API_KEY = import.meta.env.VITE_SHEETS_API_KEY || '' // Use environment variable
 
