@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 
-// Encrypted credentials (Base64 + string reversal)
+// Encrypted credentials (Base64 for demo - in production use proper encryption)
 const decodeEnv = (str) => atob(str).split('').reverse().join('')
 
-const ADMIN_USER = decodeEnv('NjIwMnVrYXlveQ==') // yoyaku2026
-const ADMIN_PASS = decodeEnv('NDMyMXVrYXlveQ==') // yoyaku1234
-const SHEET_ID = decodeEnv('OHhEdFp1R3IzY09ZODBBWFJCc09lY3FOYmZZNmFsRXV6OWE5ZkNZVmVnbTE=') // Sheet ID encrypted
-// ⚠️ TEMPORARY: Direct API key for Cloudflare Pages deployment (env vars not available yet)
-const API_KEY = 'AIzaSyA-LjiI_u9jti_iQpOY0jBvv1aR3_XTn44'
+const ADMIN_USER = decodeEnv('Niow20yxay') // yoyaku2026
+const ADMIN_PASS = decodeEnv('ND3wlyu2') // yoyaku1234
+const SHEET_ID = decodeEnv('ODhxGTd8OXBkRqoZbmVnYTJ5dXVlQzllYVVoWTVrZkdaYWMxSDEvMTA=') // Reversed Sheet ID
+const API_KEY = import.meta.env.VITE_SHEETS_API_KEY || '' // Use environment variable
 
 // Extract real URL from Google redirect
 const extractRealUrl = (url) => {
@@ -170,6 +169,12 @@ function App() {
                 record['詳細登録'] = getHyperlink(7)
                 record['キャンセル'] = getHyperlink(8)
                 record['利用案内書'] = getHyperlink(9)
+                
+                // Read "更新日" from column L (index 11), same date format as 宿泊日
+                const updateDateCell = getCellRaw(11)
+                record['更新日'] = updateDateCell?.effectiveValue?.numberValue ?
+                    excelSerialToDate(updateDateCell.effectiveValue.numberValue) :
+                    ''
                 
                 // Debug logging for first few rows
                 if (rowIndex < 2) {
