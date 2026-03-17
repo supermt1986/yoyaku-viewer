@@ -408,21 +408,21 @@ function App() {
     return (
         <div className="min-h-screen bg-gray-50">
             <header className="bg-white shadow-md sticky top-0 z-10">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <div className="w-full max-w-screen-2xl mx-auto px-3 sm:px-4 lg:px-6 py-4">
                     <div className="flex justify-between items-center">
                         <div>
-                            <h1 className="text-2xl font-bold text-gray-800">🏨 Yoyaku Viewer</h1>
+                            <h1 className="text-xl sm:text-2xl font-bold text-gray-800">🏨 Yoyaku Viewer</h1>
                             {apiStatus && <p className="text-xs text-green-600 mt-1">{apiStatus}</p>}
                         </div>
-                        <button onClick={handleLogout} className="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-lg">ログアウト</button>
+                        <button onClick={handleLogout} className="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-3 sm:px-4 rounded-lg text-sm">ログアウト</button>
                     </div>
                 </div>
             </header>
 
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
-                    <h2 className="text-lg font-semibold text-gray-800 mb-4">フィルタ</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <main className="w-full max-w-screen-2xl mx-auto px-3 sm:px-4 lg:px-6 py-6">
+                <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 mb-6">
+                    <h2 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">フィルタ</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">状態 (複数選択可能)</label>
                             <div className="border border-gray-300 rounded-lg p-2 space-y-1 max-h-48 overflow-y-auto">
@@ -490,22 +490,38 @@ function App() {
                     ) : (
                         <>
                             <div className="overflow-x-auto">
-                                <table className="min-w-full divide-y divide-gray-200">
+                                <table className="min-w-full divide-y divide-gray-200 text-xs sm:text-sm">
                                     <thead className="bg-gray-50">
                                         <tr>
-                                            {columns.map(c => (
-                                                <th key={c} className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap">{c}</th>
-                                            ))}
+                                            {/* 重要列は常に表示 */}
+                                            <th key="予約者" className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap">予約者</th>
+                                            <th key="宿泊日" className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap">宿泊日</th>
+                                            <th key="ホテル" className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap hidden lg:table-cell">ホテル</th>
+                                            <th key="状態" className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap">状態</th>
+                                            {/* 次要列は広い画面のみ */}
+                                            <th key="受付番号" className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap hidden xl:table-cell">受付番号</th>
+                                            <th key="部屋タイプ" className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap hidden xl:table-cell">部屋タイプ</th>
+                                            <th key="キャンセル料発生日" className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap hidden xl:table-cell">キャンセル料発生</th>
+                                            <th key="詳細登録" className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap hidden md:table-cell">詳細</th>
+                                            <th key="キャンセル" className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap hidden md:table-cell">キャンセル</th>
+                                            <th key="利用案内書" className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap hidden md:table-cell">案内書</th>
+                                            <th key="更新日" className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase whitespace-nowrap hidden lg:table-cell">更新日</th>
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200">
                                         {paginatedData.map(row => (
                                             <tr key={row._id} className="hover:bg-gray-50 transition-colors">
-                                                {columns.map(c => (
-                                                    <td key={c} className="px-4 py-3 whitespace-nowrap text-sm text-gray-700">
-                                                        {renderCell(row[c], c, row)}
-                                                    </td>
-                                                ))}
+                                                <td className="px-3 py-3 whitespace-nowrap font-medium">{row['予約者'] || '-'}</td>
+                                                <td className="px-3 py-3 whitespace-nowrap">{formatDate(row['宿泊日']) || '-'}</td>
+                                                <td className="px-3 py-3 whitespace-nowrap hidden lg:table-cell">{row['ホテル'] || '-'}</td>
+                                                <td className="px-3 py-3 whitespace-nowrap">{renderCell(row['状態'], '状態', row)}</td>
+                                                <td className="px-3 py-3 whitespace-nowrap hidden xl:table-cell">{row['受付番号'] || '-'}</td>
+                                                <td className="px-3 py-3 whitespace-nowrap hidden xl:table-cell">{row['部屋タイプ'] || '-'}</td>
+                                                <td className="px-3 py-3 whitespace-nowrap hidden xl:table-cell">{formatDate(row['キャンセル料発生日']) || '-'}</td>
+                                                <td className="px-3 py-3 whitespace-nowrap hidden md:table-cell">{renderCell(row['詳細登録'], '詳細登録', row)}</td>
+                                                <td className="px-3 py-3 whitespace-nowrap hidden md:table-cell">{renderCell(row['キャンセル'], 'キャンセル', row)}</td>
+                                                <td className="px-3 py-3 whitespace-nowrap hidden md:table-cell">{renderCell(row['利用案内書'], '利用案内書', row)}</td>
+                                                <td className="px-3 py-3 whitespace-nowrap hidden lg:table-cell">{formatDate(row['更新日']) || '-'}</td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -517,23 +533,23 @@ function App() {
                 </div>
 
                 {!loading && filteredData.length > 0 && (
-                    <div className="mt-6 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
-                        <div className="text-sm text-gray-600">
+                    <div className="mt-4 flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0">
+                        <div className="text-xs sm:text-sm text-gray-600">
                             <span className="font-medium">{filteredData.length}</span>件中{' '}
                             <span className="font-medium">{Math.min((currentPage-1)*rowsPerPage+1, filteredData.length)}</span>-{' '}
                             <span className="font-medium">{Math.min(currentPage*rowsPerPage, filteredData.length)}</span>
                         </div>
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-1 sm:space-x-2">
                             <button onClick={() => setCurrentPage(p => Math.max(1, p-1))} disabled={currentPage===1}
-                                className="px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50">前</button>
-                            <span className="text-sm text-gray-600">{currentPage}/{totalPages}</span>
+                                className="px-2 py-1 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 text-sm">前</button>
+                            <span className="text-xs sm:text-sm text-gray-600">{currentPage}/{totalPages}</span>
                             <button onClick={() => setCurrentPage(p => Math.min(totalPages, p+1))} disabled={currentPage===totalPages}
-                                className="px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50">次</button>
+                                className="px-2 py-1 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 text-sm">次</button>
                         </div>
-                        <div className="flex items-center space-x-2">
-                            <label className="text-sm text-gray-600">行数:</label>
+                        <div className="flex items-center space-x-1 sm:space-x-2">
+                            <label className="text-xs sm:text-sm text-gray-600 whitespace-nowrap">行数:</label>
                             <select value={rowsPerPage} onChange={(e) => { setRowsPerPage(Number(e.target.value)); setCurrentPage(1); }}
-                                className="px-2 py-1 border border-gray-300 rounded-md">
+                                className="px-2 py-1 border border-gray-300 rounded-md text-sm">
                                 <option value={5}>5</option><option value={10}>10</option><option value={25}>25</option><option value={50}>50</option>
                             </select>
                         </div>
