@@ -493,35 +493,41 @@ function App() {
                                 <table className="min-w-full divide-y divide-gray-200 text-[10px] sm:text-xs">
                                     <thead className="bg-gray-50">
                                         <tr>
-                                            {/* 重要列は常に表示 */}
+                                            {/* 基本情報 - すべての画面で表示 */}
                                             <th key="予約者" className="px-2 py-3 text-left text-[9px] font-medium text-gray-500 uppercase whitespace-nowrap">予約者</th>
                                             <th key="宿泊日" className="px-2 py-3 text-left text-[9px] font-medium text-gray-500 uppercase whitespace-nowrap">宿泊日</th>
-                                            <th key="ホテル" className="px-2 py-3 text-left text-[9px] font-medium text-gray-500 uppercase whitespace-nowrap hidden lg:table-cell">ホテル</th>
+                                            <th key="ホテル" className="px-2 py-3 text-left text-[9px] font-medium text-gray-500 uppercase whitespace-nowrap">ホテル</th>
                                             <th key="状態" className="px-2 py-3 text-left text-[9px] font-medium text-gray-500 uppercase whitespace-nowrap">状態</th>
-                                            {/* 次要列は広い画面のみ */}
-                                            <th key="受付番号" className="px-2 py-3 text-left text-[9px] font-medium text-gray-500 uppercase whitespace-nowrap hidden xl:table-cell">受付番号</th>
-                                            <th key="部屋タイプ" className="px-2 py-3 text-left text-[9px] font-medium text-gray-500 uppercase whitespace-nowrap hidden xl:table-cell">部屋タイプ</th>
-                                            <th key="キャンセル料発生日" className="px-2 py-3 text-left text-[9px] font-medium text-gray-500 uppercase whitespace-nowrap hidden xl:table-cell">キャンセル料発生</th>
+                                            {/* 操作リンク - スマホでは非表示 */}
                                             <th key="詳細登録" className="px-2 py-3 text-left text-[9px] font-medium text-gray-500 uppercase whitespace-nowrap hidden md:table-cell">詳細</th>
                                             <th key="キャンセル" className="px-2 py-3 text-left text-[9px] font-medium text-gray-500 uppercase whitespace-nowrap hidden md:table-cell">キャンセル</th>
                                             <th key="利用案内書" className="px-2 py-3 text-left text-[9px] font-medium text-gray-500 uppercase whitespace-nowrap hidden md:table-cell">案内書</th>
+                                            {/* 追加情報 - タブレット以上 */}
                                             <th key="更新日" className="px-2 py-3 text-left text-[9px] font-medium text-gray-500 uppercase whitespace-nowrap hidden lg:table-cell">更新日</th>
+                                            {/* 詳細情報 - PC デスクトップ */}
+                                            <th key="受付番号" className="px-2 py-3 text-left text-[9px] font-medium text-gray-500 uppercase whitespace-nowrap hidden xl:table-cell">受付番号</th>
+                                            <th key="部屋タイプ" className="px-2 py-3 text-left text-[9px] font-medium text-gray-500 uppercase whitespace-nowrap hidden xl:table-cell">部屋タイプ</th>
+                                            <th key="キャンセル料発生日" className="px-2 py-3 text-left text-[9px] font-medium text-gray-500 uppercase whitespace-nowrap hidden xl:table-cell">キャンセル料</th>
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200">
                                         {paginatedData.map(row => (
                                             <tr key={row._id} className="hover:bg-gray-50 transition-colors">
+                                                {/* 基本情報 - 常に表示 */}
                                                 <td className="px-2 py-3 whitespace-nowrap font-medium">{row['予約者'] || '-'}</td>
                                                 <td className="px-2 py-3 whitespace-nowrap">{formatDate(row['宿泊日']) || '-'}</td>
-                                                <td className="px-2 py-3 whitespace-nowrap hidden lg:table-cell">{row['ホテル'] || '-'}</td>
+                                                <td className="px-2 py-3 whitespace-nowrap">{row['ホテル'] || '-'}</td>
                                                 <td className="px-2 py-3 whitespace-nowrap">{renderCell(row['状態'], '状態', row)}</td>
-                                                <td className="px-2 py-3 whitespace-nowrap hidden xl:table-cell">{row['受付番号'] || '-'}</td>
-                                                <td className="px-2 py-3 whitespace-nowrap hidden xl:table-cell">{row['部屋タイプ'] || '-'}</td>
-                                                <td className="px-2 py-3 whitespace-nowrap hidden xl:table-cell">{formatDate(row['キャンセル料発生日']) || '-'}</td>
+                                                {/* 操作リンク */}
                                                 <td className="px-2 py-3 whitespace-nowrap hidden md:table-cell">{renderCell(row['詳細登録'], '詳細登録', row)}</td>
                                                 <td className="px-2 py-3 whitespace-nowrap hidden md:table-cell">{renderCell(row['キャンセル'], 'キャンセル', row)}</td>
                                                 <td className="px-2 py-3 whitespace-nowrap hidden md:table-cell">{renderCell(row['利用案内書'], '利用案内書', row)}</td>
+                                                {/* 追加情報 */}
                                                 <td className="px-2 py-3 whitespace-nowrap hidden lg:table-cell">{formatDate(row['更新日']) || '-'}</td>
+                                                {/* 詳細情報 */}
+                                                <td className="px-2 py-3 whitespace-nowrap hidden xl:table-cell">{row['受付番号'] || '-'}</td>
+                                                <td className="px-2 py-3 whitespace-nowrap hidden xl:table-cell">{row['部屋タイプ'] || '-'}</td>
+                                                <td className="px-2 py-3 whitespace-nowrap hidden xl:table-cell">{formatDate(row['キャンセル料発生日']) || '-'}</td>
                                             </tr>
                                         ))}
                                     </tbody>
